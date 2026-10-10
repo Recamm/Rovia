@@ -6,7 +6,7 @@ App web en español para explorar lugares, compartir experiencias y organizar pl
 
 El frontend está construido en **React 19 + TypeScript estricto + Vite**, con React Router, TanStack Query y React Leaflet. Incluye SQL de Supabase/PostGIS, políticas RLS, APIs transaccionales, funciones de fotos, importador OSM y pruebas.
 
-**Todavía no existe un proyecto Supabase conectado.** En ese estado se puede explorar un catálogo auténtico y abrir fichas; no se simulan cuentas, reseñas, likes, guardados ni relaciones. La interfaz señala expresamente la conexión pendiente. Al configurar las variables públicas y aplicar las migraciones, los mismos formularios y servicios usan Supabase.
+**Conectado al proyecto Supabase Rovia (`scektvkakqnrjndjaupe`).** Se aplicaron las ocho migraciones, se cargaron los 7.510 locales y se desplegaron `image-upload` y `photo-cleanup`. La preview se compila con URL y clave pública. Quedan la configuración de correo y redirecciones, el secreto/cron de limpieza y el registro de la cuenta que será administradora. No se simulan cuentas ni actividad personal.
 
 El catálogo contiene **7.510 locales gastronómicos con nombre**, normalizados de **7.824 objetos OSM**, descargados el **10/10/2026**. Incluye CABA y **todo el partido de Vicente López**, recortados mediante sus límites administrativos OSM (relaciones 3082668 y 2752665). Son restaurantes, cafeterías, bares, heladerías, panaderías, pastelerías y comida rápida. Excluye kioscos, supermercados y comercios ajenos. No garantiza todos los negocios existentes ni una verificación presencial. No hay reseñas o personas sintéticas en producción.
 
@@ -36,7 +36,9 @@ npm run build
 
 ## Conectar Supabase
 
-1. Creá un **proyecto nuevo** de Supabase. No ejecutes estas migraciones sobre una aplicación existente. Los nombres pertenecen al dominio Rovia; no hay scripts de reset ni borrados masivos.
+El proyecto actual ya está preparado. Los pasos siguientes sirven para configurar tu entorno local o crear otro entorno de prueba. No reapliques a mano las migraciones que ya figuran en el historial.
+
+1. Para otro entorno, creá un **proyecto nuevo** de Supabase. No ejecutes estas migraciones sobre una aplicación existente. Los nombres pertenecen al dominio Rovia; no hay scripts de reset ni borrados masivos.
 2. Instalá Supabase CLI según su documentación oficial. Ejecutá `supabase login`, `supabase link --project-ref TU_PROJECT_REF` y `supabase db push` desde esta carpeta. También podés aplicar los ocho archivos SQL, en orden, mediante SQL Editor.
 3. Las migraciones crean tablas, categorías, PostGIS en `extensions`, restricciones, índices, RLS, RPC y los buckets privados `review-photos` y `avatars`. No cambies esos buckets a públicos. PostgREST debe exponer únicamente `public`; **no expongas `private`**. Los permisos adicionales de funciones se conceden explícitamente.
 4. En `.env.local`, completá `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`. Se admite la clave pública legacy mediante `VITE_SUPABASE_ANON_KEY`. Reiniciá Vite o reconstruí el frontend. Las claves `service_role` van solo en entornos confiables.
@@ -83,6 +85,8 @@ El importador anterior `scripts/import-osm.mjs` sigue disponible para lotes acot
 Los datos OSM están bajo ODbL; conservá la atribución y cumplí sus condiciones para la base y sus derivados. `data/osm-source.json` es la descarga original reproducible. Las experiencias y perfiles se guardan por separado y no deben exportarse como parte del catálogo abierto.
 
 ## Fotos y limpieza
+
+La función intenta usar el WASM empaquetado por CLI. Si no está presente, descarga la versión 0.0.44 fijada desde jsDelivr y verifica SHA-256 antes de inicializarla; una falla impide procesar la imagen y puede reintentarse. El primer uso de cada instancia depende de esa descarga. Para evitarla, desplegá por CLI con `npm run prepare:edge`.
 
 La función admite JPEG, PNG y WebP; valida firmas, decodifica el contenido con ImageMagick WASM, restringe recursos, aplica orientación, retira metadatos y reencodea como JPEG. Produce una versión de hasta 1.600 px y una miniatura de hasta 360 px. Avatar: hasta 512 px. Máximo 5 MB por entrada y 8 megapíxeles; si supera recursos del runtime también se rechaza. No se aceptan SVG, PDF ni URLs de imagen. La transparencia se aplana al generar JPEG.
 
@@ -132,7 +136,7 @@ Vercel: framework Vite, build `npm run build`, output `dist`; configurá variabl
 
 Esta entrega se publica en un Site **privado** para revisión. Ese acceso privado al frontend es independiente de Supabase Auth y RLS. Para uso compartido de un piloto necesitás configurar su alojamiento/audiencia y los servicios propios; no se cambió el acceso a público.
 
-Rutas: `/`, `/local/:id`, `/local/:id/resena`, `/actividad`, `/guardados`, `/lista/:id`, `/personas`, `/perfil`, `/persona/:id`, `/persona/:id/conexiones`, `/notificaciones`, `/configuracion`, `/auth`, `/auth/callback`, `/auth/reset` y `/moderacion`.
+Rutas: `/`, `/local/:id`, `/local/:id/resena`, `/actividad`, `/guardados`, `/lista/:id`, `/personas`, `/perfil`, `/persona/:id`, `/persona/:id/conexiones`, `/notificaciones`, `/configuracion`, `/auth`, `/auth/callback`, `/auth/reset`, `/sugerir-local`, `/admin` y `/moderacion`.
 
 ## Verificación
 
@@ -164,7 +168,6 @@ Consultá `VERIFICACION.md` para el detalle de cobertura y límites.
 - https://dev.overpass-api.de/output_formats.html
 
 Dependencias exactas resueltas en `package-lock.json`. Plus Jakarta Sans conserva su licencia OFL dentro de su paquete; Leaflet, iconos, WASM y PostGIS mantienen sus licencias de origen. Antes de abrir el piloto, completá políticas de privacidad/uso, catálogo auditado, SMTP, almacenamiento y cuotas, según la investigación entregada.
-
 
 ## Administración y propuestas de locales
 

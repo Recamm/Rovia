@@ -1,0 +1,56 @@
+{
+  "name": "rovia",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "import:osm": "node scripts/import-osm.mjs",
+    "prepare:edge": "node scripts/prepare-edge.mjs",
+    "check:edge": "deno check --node-modules-dir=manual --no-config supabase/functions/image-upload/index.ts supabase/functions/photo-cleanup/index.ts",
+    "format": "prettier --write src tests scripts supabase/functions package.json tsconfig.json vite.config.ts playwright.config.ts",
+    "catalog:refresh": "node scripts/refresh-catalog.mjs",
+    "catalog:check": "node scripts/check-catalog.mjs",
+    "import:catalog": "node scripts/import-catalog.mjs"
+  },
+  "dependencies": {
+    "@fontsource/plus-jakarta-sans": "^5.2.0",
+    "@supabase/supabase-js": "2.117.3",
+    "@tanstack/react-query": "5.104.1",
+    "leaflet": "1.9.4",
+    "leaflet.markercluster": "1.5.3",
+    "lucide-react": "^0.468.0",
+    "opening_hours": "^3.10.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-leaflet": "5.0.0",
+    "react-router-dom": "7.18.4"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@electric-sql/pglite-postgis": "^0.2.8",
+    "@imagemagick/magick-wasm": "^0.0.44",
+    "@playwright/test": "^1.58.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/leaflet": "^1.9.21",
+    "@types/leaflet.markercluster": "^1.5.6",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "deno": "^2.9.6",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "vite": "8.3.4",
+    "vitest": "^4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Recamm/Rovia.git"
+  }
+}

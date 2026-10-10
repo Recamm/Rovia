@@ -1,0 +1,23 @@
+project_id = "rovia"
+[api]
+enabled = true
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 200
+[db]
+major_version = 17
+[auth]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/auth/callback", "http://localhost:5173/auth/reset"]
+enable_signup = true
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+[storage]
+enabled = true
+file_size_limit = "5MiB"
+[functions.image-upload]
+verify_jwt = false
+static_files = ["./functions/image-upload/magick.wasm"]
+[functions.photo-cleanup]
+verify_jwt = false
