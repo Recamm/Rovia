@@ -11,6 +11,8 @@
   --mint: #daeee8;
   --muted: #65716d;
   --line: #e3e7df;
+  --mobile-nav-padding: calc(16px + env(safe-area-inset-bottom, 0px));
+  --mobile-nav-height: calc(64px + var(--mobile-nav-padding));
 }
 * {
   box-sizing: border-box;
@@ -296,7 +298,13 @@ pre {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 4px;
+  padding: 0;
+}
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
 }
 .brand-dot {
   color: var(--coral);
@@ -2413,7 +2421,7 @@ main {
     height: 37px;
   }
   .app-body {
-    height: calc(100dvh - 129px);
+    height: calc(100dvh - 65px - var(--mobile-nav-height));
   }
   .sidebar {
     position: fixed;
@@ -2421,9 +2429,9 @@ main {
     left: 0;
     right: 0;
     width: 100%;
-    height: 64px;
+    height: var(--mobile-nav-height);
     flex-direction: row;
-    padding: 0 5px;
+    padding: 0 5px var(--mobile-nav-padding);
     border: 0;
     border-top: 1px solid var(--line);
     justify-content: space-around;
@@ -2733,7 +2741,7 @@ main {
     padding: 11px 14px;
   }
   .toast {
-    bottom: 80px;
+    bottom: calc(var(--mobile-nav-height) + 16px);
     font-size: 11px;
     max-width: calc(100% - 24px);
     min-width: 250px;

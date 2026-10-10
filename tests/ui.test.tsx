@@ -7,6 +7,16 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { readFileSync } from "node:fs";
+vi.mock("../src/services/supabase", () => ({
+  configured: false,
+  supabase: null,
+  db: () => {
+    throw new Error("Backend desconectado solo en esta prueba");
+  },
+  fail: (error: { message: string } | null) => {
+    if (error) throw new Error(error.message);
+  },
+}));
 vi.mock("../src/components/MapView", () => ({
   MapView: () => <div aria-label="Mapa probado por separado">Mapa</div>,
 }));
@@ -93,9 +103,7 @@ describe("Interfaz conectada al catálogo real y estados pendientes", () => {
         .getByRole("button", { name: "Explorar" })
         .getAttribute("aria-pressed"),
     ).toBe("true");
-    fireEvent.click(
-      screen.getByRole("button", { name: "Mi mapa" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Mi mapa" }));
     expect(
       screen
         .getByRole("button", { name: "Mi mapa" })

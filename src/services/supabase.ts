@@ -1,11 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
-const url = import.meta.env.VITE_SUPABASE_URL;
-const key =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  import.meta.env.VITE_SUPABASE_ANON_KEY;
-export const configured = Boolean(url && key);
-export const supabase = configured
-  ? createClient(url, key, {
+import { resolveSupabaseConfig } from "../config/supabase";
+const connection = resolveSupabaseConfig({
+  VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
+  VITE_SUPABASE_PUBLISHABLE_KEY: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+  VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
+});
+export const configured = Boolean(connection);
+export const supabase = connection
+  ? createClient(connection.url, connection.key, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
@@ -30,5 +32,9 @@ export function fail(error: { message: string; code?: string } | null) {
     throw new Error("No tenés permiso para esta acción.");
   if (error.message.includes("Invalid login credentials"))
     throw new Error("El correo o la contraseña no son correctos.");
+  if (error.message.includes("Email not confirmed"))
+    throw new Error(
+      "Confirmá tu correo antes de ingresar. Revisá el mensaje de registro y la carpeta de spam.",
+    );
   throw new Error(error.message);
 }

@@ -39,7 +39,7 @@ function headers(req: Request) {
   const origin = req.headers.get("origin") ?? "";
   const allowed = (
     Deno.env.get("ALLOWED_ORIGINS") ??
-    "http://localhost:5173,https://rovia-camilo.camiloreartes126.chatgpt.site"
+    "http://localhost:5173,https://rovia-camilo.camiloreartes126.chatgpt.site,https://userovia.vercel.app"
   ).split(",");
   return {
     "Access-Control-Allow-Origin": allowed.includes(origin) ? origin : "null",

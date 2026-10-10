@@ -2,7 +2,7 @@
 
 ## Resultado comprobado
 
-- 45 pruebas aprobadas en ocho archivos: dominio, importación, imágenes, SQL/PostGIS y componentes.
+- 51 pruebas aprobadas en once archivos: dominio, importación, imágenes, SQL/PostGIS y componentes.
 - TypeScript estricto, chequeo de Edge Functions con Deno y catálogo verificados.
 - Catálogo real: 7.824 objetos OSM originales; 7.510 locales con nombre, identidad estable y coordenadas dentro de CABA o todo el partido de Vicente López. Cero registros fuera de esos límites en Supabase.
 - Supabase Rovia (`scektvkakqnrjndjaupe`): ocho migraciones aplicadas y sus versiones sincronizadas con los archivos locales. 7.510 lugares activos importados, cero cuentas y cero propuestas de prueba.
@@ -34,3 +34,9 @@ Referencias del diagnóstico: [funciones públicas privilegiadas](https://supaba
 - Verificar mapa, móvil, teclado y rutas directas en navegador real. No se ejecutó Playwright ni se inició un navegador alternativo en este entorno.
 
 El catálogo no representa un censo exhaustivo: incluye los negocios gastronómicos con nombre que figuran en la extracción OSM. Las sugerencias y la administración permiten completar faltantes. No se inventan precios, horarios, puntuaciones ni reseñas. Las bajas preservan historial y se distinguen del cierre permanente.
+
+## Actualización Vercel/PWA
+
+El HTML y bundle original de `userovia.vercel.app` no contenían URL ni clave pública de Supabase. Se corrigió incluyendo la configuración pública de Rovia en el código, manteniendo overrides completos para otros entornos. La API de Auth alojada respondió 200, email/registro habilitados y confirmación de correo requerida. No había usuarios registrados al verificar.
+
+Se probaron el formulario habilitado sin variables de Vercel, la llamada al cliente de inicio de sesión y el mensaje de correo no confirmado; no se inició una sesión real con credenciales de una persona. El worker se prueba con eventos simulados: deja pasar APIs, teselas, catálogo y solicitudes autenticadas; una navegación sin red obtiene únicamente el shell limpio. Se incluyeron manifest, íconos, nombre Rovia y espacio inferior adaptado a la zona segura. No se verificó la instalación en un teléfono real.

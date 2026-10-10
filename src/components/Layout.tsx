@@ -42,7 +42,10 @@ export default function Layout() {
       </a>
       <header className="header">
         <Link to="/" className="brand" aria-label="Rovia, ir a explorar">
-          <span className="brand-mark">r</span>rovia
+          <span className="brand-mark">
+            <img src="/logo.svg" alt="" width="34" height="34" />
+          </span>
+          rovia
           <span className="brand-dot">.</span>
         </Link>
         <span className="brand-tagline">Tus lugares, con tu gente.</span>

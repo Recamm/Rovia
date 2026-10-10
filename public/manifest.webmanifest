@@ -1,0 +1,32 @@
+{
+  "id": "/",
+  "name": "Rovia",
+  "short_name": "Rovia",
+  "lang": "es-AR",
+  "description": "Descubrí gastronomía de CABA y Vicente López y organizá tus lugares.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFF9F1",
+  "theme_color": "#203F3B",
+  "icons": [
+    {
+      "src": "/icons/rovia-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/rovia-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/rovia-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

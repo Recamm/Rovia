@@ -6,7 +6,7 @@ App web en español para explorar lugares, compartir experiencias y organizar pl
 
 El frontend está construido en **React 19 + TypeScript estricto + Vite**, con React Router, TanStack Query y React Leaflet. Incluye SQL de Supabase/PostGIS, políticas RLS, APIs transaccionales, funciones de fotos, importador OSM y pruebas.
 
-**Conectado al proyecto Supabase Rovia (`scektvkakqnrjndjaupe`).** Se aplicaron las ocho migraciones, se cargaron los 7.510 locales y se desplegaron `image-upload` y `photo-cleanup`. La preview se compila con URL y clave pública. Quedan la configuración de correo y redirecciones, el secreto/cron de limpieza y el registro de la cuenta que será administradora. No se simulan cuentas ni actividad personal.
+**Conectado al proyecto Supabase Rovia (`scektvkakqnrjndjaupe`).** Se aplicaron las ocho migraciones, se cargaron los 7.510 locales y se desplegaron `image-upload` y `photo-cleanup`. El frontend incluye la URL y clave publishable del proyecto en `src/config/supabase-public.json`, de modo que un build limpio de GitHub/Vercel conecta al mismo proyecto sin depender de archivos ignorados. Quedan la configuración de correo y redirecciones, el secreto/cron de limpieza y el registro de la cuenta que será administradora. No se simulan cuentas ni actividad personal.
 
 El catálogo contiene **7.510 locales gastronómicos con nombre**, normalizados de **7.824 objetos OSM**, descargados el **10/10/2026**. Incluye CABA y **todo el partido de Vicente López**, recortados mediante sus límites administrativos OSM (relaciones 3082668 y 2752665). Son restaurantes, cafeterías, bares, heladerías, panaderías, pastelerías y comida rápida. Excluye kioscos, supermercados y comercios ajenos. No garantiza todos los negocios existentes ni una verificación presencial. No hay reseñas o personas sintéticas en producción.
 
@@ -26,7 +26,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Abrí `http://localhost:5173`. Sin credenciales funciona la exploración de la extracción OSM incluida. El almacenamiento del catálogo incluido es de solo lectura: no reemplaza la base de actividad de Rovia ni guarda cambios personales.
+Abrí `http://localhost:5173`. Sin overrides utiliza el proyecto Rovia incluido. Para otro proyecto, configurá URL y clave pública juntas. El almacenamiento del catálogo incluido es de solo lectura: no reemplaza la base de actividad de Rovia ni guarda cambios personales.
 
 ```bash
 npm run typecheck
@@ -134,9 +134,15 @@ La app no ofrece un borrado de cuenta automatizado. Para solicitudes de eliminac
 
 Vercel: framework Vite, build `npm run build`, output `dist`; configurá variables Vite en el host antes de compilar. `vercel.json` conserva las rutas directas. La investigación señala que debe revisarse la adecuación del plan de hosting al objetivo comercial; también podés usar un host estático con fallback SPA como Cloudflare Pages (`public/_redirects`).
 
-Esta entrega se publica en un Site **privado** para revisión. Ese acceso privado al frontend es independiente de Supabase Auth y RLS. Para uso compartido de un piloto necesitás configurar su alojamiento/audiencia y los servicios propios; no se cambió el acceso a público.
+El dominio principal en Vercel es **https://userovia.vercel.app**. La preview de Sites se conserva **privada** para revisión. Ese acceso privado al frontend es independiente de Supabase Auth y RLS. Para uso compartido de un piloto necesitás configurar su alojamiento/audiencia y los servicios propios; no se cambió el acceso a público.
 
 Rutas: `/`, `/local/:id`, `/local/:id/resena`, `/actividad`, `/guardados`, `/lista/:id`, `/personas`, `/perfil`, `/persona/:id`, `/persona/:id/conexiones`, `/notificaciones`, `/configuracion`, `/auth`, `/auth/callback`, `/auth/reset`, `/sugerir-local`, `/admin` y `/moderacion`.
+
+## PWA y móvil
+
+El título del navegador y el nombre de instalación son **Rovia**. Incluye `manifest.webmanifest`, logo SVG, PNG de 192/512, ícono maskable y Apple Touch Icon de 180. El service worker generado durante el build conserva únicamente el shell público (HTML, JS, CSS, fuentes e íconos); no guarda respuestas de Supabase, fotos, teselas ni actividad personal. La navegación prioriza la red. La cuenta, el catálogo conectado y el mapa requieren conexión; esto no ofrece un mapa completo offline.
+
+La barra inferior reserva 16 px adicionales más `env(safe-area-inset-bottom)` y el contenido/avisos se ajustan a su altura. La comprobación visual y táctil final debe hacerse en el teléfono. Para actualizar la instalación existente, cerrá Rovia, abrí el dominio y volvé a agregarla a inicio si el sistema conserva el ícono o nombre anterior.
 
 ## Verificación
 

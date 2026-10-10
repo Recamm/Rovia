@@ -4,7 +4,7 @@ Repositorio: https://github.com/Recamm/Rovia. El código del frontend usa React 
 
 ## Estado de la entrega
 
-El código se publica en `Recamm/Rovia`. El Supabase `scektvkakqnrjndjaupe` ya tiene las ocho migraciones y los 7.510 locales; ambas Edge Functions están desplegadas. La preview está conectada. Falta importar el repositorio en tu cuenta Vercel, configurar Auth/SMTP y CORS para ese dominio, programar la limpieza y registrar/asignar tu administrador.
+El código se publica en `Recamm/Rovia`. El Supabase `scektvkakqnrjndjaupe` ya tiene las ocho migraciones y los 7.510 locales; ambas Edge Functions están desplegadas. La preview está conectada. El repositorio está conectado a Vercel en **https://userovia.vercel.app**. Queda configurar Auth/SMTP, programar la limpieza y registrar/asignar tu administrador.
 
 ## 1. Trabajar con tu repositorio
 
@@ -43,7 +43,9 @@ La región territorial queda incorporada en la migración `catalog_admin` con po
 
 ### Variables públicas del frontend
 
-Copiá `.env.example` a `.env.local` para trabajar localmente y completá:
+El proyecto ya incluye la URL y clave **publishable** de Rovia en `src/config/supabase-public.json`. Son públicas y la seguridad sigue en RLS. El build de Vercel no requiere variables adicionales para conectar a ese proyecto.
+
+Para cambiar a un entorno Supabase diferente, copiá `.env.example` a `.env.local` y completá **ambos** valores; un override incompleto deja la conexión deshabilitada para evitar mezclar proyectos:
 
 ```dotenv
 VITE_SUPABASE_URL=https://TU_PROJECT_REF.supabase.co
@@ -98,7 +100,7 @@ En tu cuenta Vercel, importá `Recamm/Rovia` y elegí:
 | Output Directory  | `dist`               |
 | Production Branch | `main`               |
 
-Cargá `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` en las variables de Vercel antes de desplegar. Conservá las variables cartográficas si cambiás el proveedor. Si modificás variables después, generá un nuevo despliegue: Vite las incorpora durante la compilación.
+Para Rovia se utiliza la configuración pública incluida. Si usás otro proyecto, cargá `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` juntas en Vercel antes de desplegar. Conservá las variables cartográficas si cambiás el proveedor. Si modificás variables después, generá un nuevo despliegue: Vite las incorpora durante la compilación.
 
 Vercel desplegará automáticamente los cambios de `main` en producción y generará previews para otras ramas/pull requests. No necesitás una GitHub Action adicional que publique en Vercel. El workflow `ci.yml` verifica tipos, pruebas, catálogo, Edge Functions y build.
 
@@ -110,10 +112,10 @@ El plan Hobby de Vercel se limita a uso personal no comercial. Elegí un plan co
 
 ## 4. Configurar acceso y correo
 
-En Supabase Auth:
+En [Supabase Auth → URL Configuration](https://supabase.com/dashboard/project/scektvkakqnrjndjaupe/auth/url-configuration):
 
-- Site URL: URL definitiva de Vercel o tu dominio.
-- Redirect URLs: direcciones exactas `/auth/callback` y `/auth/reset` del dominio de producción, más las direcciones locales necesarias.
+- Site URL actual: `https://userovia.vercel.app`.
+- Redirect URLs actuales: `https://userovia.vercel.app/auth/callback*` (incluye el parámetro `next`) y `https://userovia.vercel.app/auth/reset`, más las direcciones locales necesarias. Conservá las URLs de la preview si también necesitás autenticarte allí.
 - Si usás previews con acceso, autorizá solo los patrones de tu cuenta/proyecto; evitá un permiso global para cualquier `vercel.app`.
 - Activá confirmación de correo y configurá SMTP para los usuarios del piloto.
 
@@ -138,3 +140,9 @@ Probá con un visitante, tu cuenta administradora y otra cuenta normal: registro
 El entorno de esta entrega verifica SQL/PostGIS, componentes y compilación; incluye la carga y consultas SQL reales en tu Supabase, pero no sustituye los recorridos con cuentas confirmadas ni la revisión visual de mapa y celular en navegador real.
 
 Fuentes oficiales: [Vercel + GitHub](https://vercel.com/docs/git/vercel-for-github), [plan Hobby](https://vercel.com/docs/plans/hobby), [redirecciones Supabase](https://supabase.com/docs/guides/auth/redirect-urls), [CLI y migraciones](https://supabase.com/docs/guides/deployment/database-migrations).
+
+## PWA instalada
+
+El título y nombre instalable son Rovia. El build genera `sw.js` y publica el manifest e íconos. `vercel.json` evita que esos recursos terminen en el fallback HTML y sirve el worker/manifest sin caché prolongada.
+
+En Android usá la opción de instalar/agregar a inicio del navegador. En iPhone usá Safari → Compartir → Agregar a inicio. Si ya existe el acceso con nombre o ícono anterior, puede ser necesario retirarlo y agregarlo otra vez. Las operaciones de Supabase y las teselas necesitan red; solo el shell público tiene soporte offline.
