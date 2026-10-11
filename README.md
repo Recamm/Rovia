@@ -182,3 +182,7 @@ El rol administrador se asigna exclusivamente desde SQL Editor o un backend conf
 Las propuestas tienen nombre, categoría, dirección, coordenadas y datos opcionales; quedan privadas para su autor y los administradores. Las RPC validan ámbito gastronómico/geográfico, restringen campos, aplican límites de envío y bloquean falsificación de autor/estado. La aprobación bloquea el registro para impedir publicarlo dos veces. Se puede vincular una propuesta a un local existente para resolver duplicados sin crear otro.
 
 Las altas y ediciones exigen un motivo y quedan auditadas. “Dar de baja” archiva el local: lo retira de Explorar y Mi mapa, conserva su ficha histórica y las reseñas/listas/visitas y permite restaurarlo. “Cerrado permanentemente” describe el estado comercial y no borra el historial. La búsqueda administrativa muestra hasta 300 resultados por zona/búsqueda; las propuestas tienen paginación de 100. La auditoría muestra las últimas 50 acciones.
+
+## Actualización: publicaciones, tema y usuarios
+
+Ver [guía de uso y Brevo](docs/POSTS-ADMIN-THEME.md). La cuenta @camilo ya es administradora. La migración de ciclo de vida de cuentas está pendiente de aprobación y NO debe aplicarse a producción automáticamente; las acciones de suspensión y eliminación permanecen deshabilitadas. Ver [estado comprobado](VERIFICACION.md).

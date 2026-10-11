@@ -4,7 +4,11 @@ Repositorio: https://github.com/Recamm/Rovia. El código del frontend usa React 
 
 ## Estado de la entrega
 
-El código se publica en `Recamm/Rovia`. El Supabase `scektvkakqnrjndjaupe` ya tiene las ocho migraciones y los 7.510 locales; ambas Edge Functions están desplegadas. La preview está conectada. El repositorio está conectado a Vercel en **https://userovia.vercel.app**. Queda configurar Auth/SMTP, programar la limpieza y registrar/asignar tu administrador.
+El Supabase `scektvkakqnrjndjaupe` tiene nueve migraciones aplicadas, 7.510 locales y las funciones `image-upload`, `photo-cleanup` y `admin-users`. Tu cuenta `@camilo` ya es administradora. El repositorio está conectado a **https://userovia.vercel.app**.
+
+**Pendiente de aprobación:** `20261011003715_account_lifecycle_controls.sql` aún NO está aplicada a producción. Cambia las referencias al borrar usuarios, agrega bloqueos por suspensión y activa estas dos acciones. No ejecutar `supabase db push` contra producción sin revisar/aprobar esa migración. Crear cuentas, administrar roles, publicaciones y enviar enlaces de recuperación no dependen de ella; el envío requiere SMTP configurado.
+
+Consultar [publicaciones, administradores, tema y Brevo](POSTS-ADMIN-THEME.md). Falta configurar confirmación de registro desactivada y SMTP Brevo, además del cron de limpieza.
 
 ## 1. Trabajar con tu repositorio
 
@@ -34,10 +38,11 @@ Usá un proyecto dedicado a Rovia, sin tablas de otra aplicación. Instalá Supa
 ```bash
 supabase login
 supabase link --project-ref TU_PROJECT_REF
-supabase db push
+supabase migration list
+# Revisar las migraciones pendientes y aprobar su alcance antes de aplicar.
 ```
 
-En un proyecto vacío, esto aplica **ocho migraciones**. En el proyecto actual, las versiones locales coinciden con las ya aplicadas y `db push` no debe repetirlas. No uses comandos de reset contra producción. Alternativamente, podés aplicar los ocho SQL de `supabase/migrations` en orden en SQL Editor; usar CLI permite conservar el seguimiento de migraciones.
+El proyecto actual tiene nueve migraciones aplicadas y una migración de ciclo de vida de cuentas pendiente de aprobación. En un proyecto de desarrollo nuevo se pueden probar todas las migraciones. `migration list` solo compara el historial; no aplica SQL. No uses comandos de reset contra producción. Alternativamente, podés aplicar los SQL aprobados de `supabase/migrations` en orden en SQL Editor; usar CLI permite conservar el seguimiento de migraciones.
 
 La región territorial queda incorporada en la migración `catalog_admin` con polígonos OSM de CABA y todo el partido de Vicente López. Los administradores se guardan en un esquema privado: la cuenta no puede concederse ese permiso desde el cliente.
 
@@ -77,9 +82,10 @@ La carga usa lotes de 100 y puede repetirse: conserva identificadores, cambios d
 npm run prepare:edge
 supabase functions deploy image-upload --no-verify-jwt
 supabase functions deploy photo-cleanup --no-verify-jwt
+supabase functions deploy admin-users --no-verify-jwt
 ```
 
-Ambas ya están desplegadas en el proyecto actual. Estos comandos permiten actualizarlas. `prepare:edge` incorpora el WASM al paquete; el despliegue de texto inicial usa el artefacto fijado con comprobación SHA-256 como alternativa. Estas funciones verifican los permisos dentro de su implementación. Copiá `supabase/functions/.env.example` a `supabase/.env.local`, completá `ALLOWED_ORIGINS` con los orígenes exactos del frontend y generá `PHOTO_CLEANUP_SECRET` aleatorio. Luego:
+Las tres ya están desplegadas en el proyecto actual. Estos comandos permiten actualizarlas. `prepare:edge` incorpora el WASM al paquete; el despliegue de texto inicial usa el artefacto fijado con comprobación SHA-256 como alternativa. Estas funciones verifican los permisos dentro de su implementación. Copiá `supabase/functions/.env.example` a `supabase/.env.local`, completá `ALLOWED_ORIGINS` con los orígenes exactos del frontend y generá `PHOTO_CLEANUP_SECRET` aleatorio. Luego:
 
 ```bash
 supabase secrets set --env-file supabase/.env.local
@@ -117,13 +123,15 @@ En [Supabase Auth → URL Configuration](https://supabase.com/dashboard/project/
 - Site URL actual: `https://userovia.vercel.app`.
 - Redirect URLs actuales: `https://userovia.vercel.app/auth/callback*` (incluye el parámetro `next`) y `https://userovia.vercel.app/auth/reset`, más las direcciones locales necesarias. Conservá las URLs de la preview si también necesitás autenticarte allí.
 - Si usás previews con acceso, autorizá solo los patrones de tu cuenta/proyecto; evitá un permiso global para cualquier `vercel.app`.
-- Activá confirmación de correo y configurá SMTP para los usuarios del piloto.
+- Desactivá **Confirm email** en Email y configurá SMTP con Brevo como se detalla en [esta guía](POSTS-ADMIN-THEME.md). Estos cambios de Auth/SMTP siguen pendientes en el servidor.
 
 Las previews conectadas al proyecto de producción pueden modificar datos reales. Para probar cambios de permisos, migraciones o borrados, usá un proyecto Supabase de desarrollo separado y sus propias variables de Preview.
 
 ## 5. Convertir tu cuenta normal en administradora
 
-1. Registrá tu cuenta en Rovia con tu correo y confirmalo.
+Tu cuenta `@camilo` ya tiene el rol. Para un primer administrador en otro entorno:
+
+1. Registrá la cuenta con su correo.
 2. Abrí `supabase/operations/grant-admin.sql`.
 3. Reemplazá `REEMPLAZAR_POR_TU_CORREO` por ese correo.
 4. Ejecutalo en SQL Editor como propietario del proyecto.
@@ -135,7 +143,7 @@ En `/admin` podés revisar propuestas en el mapa, corregirlas y publicarlas, rec
 
 ## 6. Comprobar el piloto
 
-Probá con un visitante, tu cuenta administradora y otra cuenta normal: registro/confirmación/reset, guardados, varias listas, filtros de Mi mapa, propuesta pendiente, aprobación, rechazo, edición y baja/restauración. Verificá que la cuenta normal no pueda abrir datos administrativos ni cambiar roles. Probá fotos y permisos con dos cuentas y recargá rutas directas en Vercel.
+Probá con un visitante, tu cuenta administradora y otra cuenta normal: registro sin confirmación/reset, guardados, varias listas, filtros de Mi mapa, propuesta pendiente, aprobación, rechazo, edición y baja/restauración. Verificá que la cuenta normal no pueda abrir datos administrativos ni cambiar roles. Probá fotos y permisos con dos cuentas y recargá rutas directas en Vercel.
 
 El entorno de esta entrega verifica SQL/PostGIS, componentes y compilación; incluye la carga y consultas SQL reales en tu Supabase, pero no sustituye los recorridos con cuentas confirmadas ni la revisión visual de mapa y celular en navegador real.
 

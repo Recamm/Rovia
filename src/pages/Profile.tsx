@@ -1,7 +1,7 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Settings, Lock, MapPin, Users, ArrowRight } from "lucide-react";
-import type { Review, Place, RoviaList } from "../types";
+import type { Review, Place, RoviaList, Post } from "../types";
 import { publicProfile, withRatings } from "../services/api";
 import { db, configured, fail } from "../services/supabase";
 import { useApp } from "../hooks/useApp";
@@ -13,6 +13,7 @@ import {
   PlaceCard,
 } from "../components/UI";
 import { PersonCard } from "./People";
+import PostCard from "../components/PostCard";
 import ReviewCard, { PrivateImage } from "../components/ReviewCard";
 export default function Profile() {
   const { id: other } = useParams();
@@ -35,7 +36,7 @@ export default function Profile() {
         db()
           .from("reviews")
           .select(
-            "*,profiles(id,username,display_name),places(id,name,category),review_photos(id,path,thumbnail_path),likes(user_id)",
+            "*,profiles!reviews_user_id_fkey(id,username,display_name),places(id,name,category),review_photos(id,path,thumbnail_path),likes(user_id)",
           )
           .eq("user_id", id!)
           .eq("archived", false)
@@ -50,7 +51,7 @@ export default function Profile() {
         db()
           .from("reviews")
           .select(
-            "*,profiles(id,username,display_name),places(id,name,category),review_photos(id,path,thumbnail_path),likes(user_id)",
+            "*,profiles!reviews_user_id_fkey(id,username,display_name),places(id,name,category),review_photos(id,path,thumbnail_path),likes(user_id)",
           )
           .eq("user_id", id!)
           .eq("archived", true)
@@ -66,6 +67,22 @@ export default function Profile() {
         visits: visitRows.map((v, i) => ({ ...v, places: rated[i] })),
         lists: lists.data as RoviaList[],
       };
+    },
+  });
+  const posts = useQuery({
+    queryKey: ["profile-posts", id, session?.user.id],
+    enabled: !!id && !!profile.data?.accessible,
+    queryFn: async () => {
+      const { data, error } = await db()
+        .from("posts")
+        .select(
+          "*,profiles!posts_user_id_fkey(id,username,display_name),places!posts_place_id_fkey(id,name,category),post_photos(id,path,thumbnail_path),post_likes(user_id)",
+        )
+        .eq("user_id", id!)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      fail(error);
+      return data as Post[];
     },
   });
   if (!id)
@@ -150,7 +167,22 @@ export default function Profile() {
               <strong>{p.following ?? 0}</strong> seguidos
             </Link>
           </div>
-          <h2>Sus experiencias</h2>
+          <h2>{own ? "Mis publicaciones" : "Publicaciones"}</h2>
+          {own && (
+            <Link className="button secondary" to="/">
+              Elegir un lugar para publicar
+            </Link>
+          )}
+          {posts.isPending ? (
+            <Loading />
+          ) : posts.isError ? (
+            <ErrorState error={posts.error} />
+          ) : posts.data?.length ? (
+            posts.data.map((post) => <PostCard key={post.id} post={post} />)
+          ) : (
+            <Empty title="Todavía no hay publicaciones" />
+          )}
+          <h2>{own ? "Mis reseñas" : "Sus reseñas"}</h2>
           {activity.isPending ? (
             <Loading />
           ) : activity.isError ? (

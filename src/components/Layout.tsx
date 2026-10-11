@@ -1,6 +1,6 @@
 import { NavLink, Link, Outlet } from "react-router-dom";
 import {
-  Map,
+  MapPin,
   Activity,
   Bookmark,
   Users,
@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useApp } from "../hooks/useApp";
 import { db, configured, fail } from "../services/supabase";
 const nav = [
-  { to: "/", label: "Explorar", icon: Map },
+  { to: "/", label: "Explorar", icon: MapPin },
   { to: "/actividad", label: "Actividad", icon: Activity },
   { to: "/guardados", label: "Guardados", icon: Bookmark },
   { to: "/personas", label: "Personas", icon: Users },
@@ -43,7 +43,13 @@ export default function Layout() {
       <header className="header">
         <Link to="/" className="brand" aria-label="Rovia, ir a explorar">
           <span className="brand-mark">
-            <img src="/logo.svg" alt="" width="34" height="34" />
+            <img
+              className="app-logo"
+              src="/logo.svg"
+              alt=""
+              width="34"
+              height="34"
+            />
           </span>
           rovia
           <span className="brand-dot">.</span>
@@ -81,7 +87,7 @@ export default function Layout() {
               to={to}
               end={to === "/"}
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `nav-item ${to === "/" ? "map-nav" : ""} ${isActive ? "active" : ""}`
               }
             >
               <I size={22} />

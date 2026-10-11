@@ -511,18 +511,7 @@ export default function Explore() {
               <X size={18} />
             </button>
           </div>
-        ) : (
-          <div className="map-bottom-note">
-            <span className="mini-compass">
-              <Map size={21} />
-            </span>
-            <div>
-              <strong>Los mejores planes empiezan con un pin.</strong>
-              <span>Tocá un lugar para conocerlo.</span>
-            </div>
-            <ArrowRight size={19} />
-          </div>
-        )}
+        ) : null}
         <span className="map-coverage">
           CABA + Vicente López · datos OSM
           {!configured ? " · actualizado 10 oct. 2026" : ""}

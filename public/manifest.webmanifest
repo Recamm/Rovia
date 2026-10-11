@@ -3,27 +3,27 @@
   "name": "Rovia",
   "short_name": "Rovia",
   "lang": "es-AR",
-  "description": "Descubrí gastronomía de CABA y Vicente López y organizá tus lugares.",
+  "description": "Descubr\u00ed gastronom\u00eda de CABA y Vicente L\u00f3pez y organiz\u00e1 tus lugares.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#FFF9F1",
-  "theme_color": "#203F3B",
+  "theme_color": "#C64E3B",
   "icons": [
     {
-      "src": "/icons/rovia-192.png",
+      "src": "/icons/rovia-light-192-v2.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/rovia-512.png",
+      "src": "/icons/rovia-light-512-v2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/rovia-maskable-512.png",
+      "src": "/icons/rovia-light-maskable-512-v2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

@@ -1,0 +1,32 @@
+{
+  "id": "/",
+  "name": "Rovia",
+  "short_name": "Rovia",
+  "lang": "es-AR",
+  "description": "Descubr\u00ed gastronom\u00eda de CABA y Vicente L\u00f3pez y organiz\u00e1 tus lugares.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFF9F1",
+  "theme_color": "#C64E3B",
+  "icons": [
+    {
+      "src": "/icons/rovia-light-192-v2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/rovia-light-512-v2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/rovia-light-maskable-512-v2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,3 +1,5 @@
+import PostCard from "../components/PostCard";
+import type { Post } from "../types";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -90,6 +92,22 @@ export default function PlaceDetail() {
     },
     onError: (e) => notice(e.message),
   });
+  const posts = useQuery({
+    queryKey: ["place-posts", id, session?.user.id],
+    enabled: configured,
+    queryFn: async () => {
+      const { data, error } = await db()
+        .from("posts")
+        .select(
+          "*,profiles!posts_user_id_fkey(id,username,display_name),places!posts_place_id_fkey(id,name,category),post_photos(id,path,thumbnail_path),post_likes(user_id)",
+        )
+        .eq("place_id", id)
+        .order("created_at", { ascending: false })
+        .limit(30);
+      fail(error);
+      return data as Post[];
+    },
+  });
   if (place.isPending) return <Loading />;
   if (place.isError) return <ErrorState error={place.error} />;
   const p = place.data;
@@ -160,9 +178,12 @@ export default function PlaceDetail() {
         </button>
       </div>
       <div className="place-action-row">
+        <Link className="button primary" to={`/local/${id}/publicar`}>
+          Publicar visita
+        </Link>
         <Link className="button primary" to={`/local/${id}/resena`}>
           <Star size={17} />
-          Compartir experiencia
+          Escribir reseña
         </Link>
         <button
           className={`button ${state.data?.saved ? "selected-button" : "secondary"}`}
@@ -334,6 +355,18 @@ export default function PlaceDetail() {
           </a>
         </section>
       </div>
+      <section className="place-reviews">
+        <h2>Publicaciones de visitas</h2>
+        {posts.isError ? (
+          <ErrorState error={posts.error} />
+        ) : posts.data?.length ? (
+          posts.data.map((post) => <PostCard key={post.id} post={post} />)
+        ) : (
+          <p className="muted">
+            Todavía no hay publicaciones visibles de este lugar.
+          </p>
+        )}
+      </section>
       <section className="place-reviews">
         <h2>
           Experiencias de la comunidad{" "}

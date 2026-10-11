@@ -16,3 +16,5 @@ supabase/functions/image-upload/magick.wasm
 !**/.env.example
 .vercel/
 .openai/
+
+supabase/.temp/
