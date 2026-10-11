@@ -525,10 +525,6 @@ export default function Explore() {
             </button>
           </div>
         ) : null}
-        <span className="map-coverage">
-          CABA + Vicente López · datos OSM
-          {!configured ? " · actualizado 10 oct. 2026" : ""}
-        </span>
       </section>
       {showFilters && (
         <Modal

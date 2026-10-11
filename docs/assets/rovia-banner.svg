@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">Rovia</title>
+  <desc id="desc">Logo naranja con R blanca junto al nombre Rovia. Tus lugares, con tu gente.</desc>
+  <rect width="1280" height="360" rx="24" fill="#FFF9F1"/>
+  <g transform="translate(395 108) scale(2.25)">
+    <rect width="64" height="64" rx="14" fill="#C64E3B"/>
+    <path d="M22 47V20h9v5c3-5 8-6 13-5v9c-9-2-13 2-13 9v9z" fill="#FFFFFF"/>
+  </g>
+  <text x="578" y="195" font-family="DejaVu Sans, Arial, sans-serif" font-size="88" font-weight="700" letter-spacing="-5" fill="#203F3B">rovia<tspan fill="#C64E3B">.</tspan></text>
+  <text x="584" y="238" font-family="DejaVu Sans, Arial, sans-serif" font-size="23" fill="#65716D">Tus lugares, con tu gente.</text>
+</svg>

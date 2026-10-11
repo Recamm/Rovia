@@ -91,7 +91,7 @@ Las tres ya están desplegadas en el proyecto actual. Estos comandos permiten ac
 supabase secrets set --env-file supabase/.env.local
 ```
 
-Programá la limpieza cada diez minutos siguiendo el README. El secreto de limpieza queda en el backend. La cola respeta quince minutos de gracia y comprueba referencias antes de eliminar archivos huérfanos.
+Programá la limpieza cada diez minutos siguiendo [CONFIGURACION.md](../CONFIGURACION.md#fotos-y-limpieza). El secreto de limpieza queda en el backend. La cola respeta quince minutos de gracia y comprueba referencias antes de eliminar archivos huérfanos.
 
 ## 3. Conectar Vercel con GitHub
 

@@ -816,7 +816,7 @@ main {
 .map-controls {
   position: absolute;
   right: 24px;
-  bottom: 135px;
+  bottom: 16px;
   z-index: 500;
   display: flex;
   flex-direction: column;
@@ -899,18 +899,6 @@ main {
 }
 .map-bottom-note > svg {
   color: var(--coral);
-}
-.map-coverage {
-  position: absolute;
-  bottom: 17px;
-  left: 28px;
-  background: #fffdf2d9;
-  padding: 5px 9px;
-  border-radius: 5px;
-  font-size: 8px;
-  color: #65716d;
-  z-index: 500;
-  pointer-events: none;
 }
 .leaflet-container {
   font-family: inherit;
@@ -2323,14 +2311,7 @@ main {
     display: none;
   }
   .map-controls {
-    bottom: 140px;
     right: 18px;
-  }
-  .map-coverage {
-    left: 18px;
-    font-size: 7px;
-    bottom: 9px;
-    max-width: 200px;
   }
   .map-detail-preview {
     left: 16px;
@@ -2613,7 +2594,6 @@ main {
   }
   .map-controls {
     right: 16px;
-    bottom: 139px;
     gap: 10px;
   }
   .map-bottom-note {
@@ -2632,27 +2612,19 @@ main {
   .map-bottom-note > svg {
     display: block;
   }
-  .map-coverage {
-    bottom: 18px;
-    left: 16px;
-    font-size: 8px;
-    max-width: 260px;
-  }
   .leaflet-control-attribution {
     font-size: 7px !important;
   }
   .map-detail-preview {
     bottom: 46px;
     left: 16px;
-    right: 16px;
+    right: 84px;
     max-width: none;
     padding: 20px;
     gap: 14px;
   }
   .map-detail-preview .place-art {
-    display: flex;
-    width: 70px;
-    height: 100px;
+    display: none;
   }
   .map-detail-preview h2 {
     font-size: 17px;
@@ -3604,7 +3576,6 @@ main {
     .moderation-card,
     .admin-result,
     .skip-link,
-    .map-coverage,
     .add-place-control,
     .rovia-cluster,
     .leaflet-popup-content-wrapper,
