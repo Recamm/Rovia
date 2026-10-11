@@ -478,6 +478,19 @@ export default function Explore() {
               <Minus size={20} />
             </button>
           </div>
+          <Link
+            to="/sugerir-local"
+            className="map-control add-place-control"
+            aria-label="Agregar local"
+            title="Agregar local"
+          >
+            <Plus size={22} />
+            <span>
+              Agregar
+              <br />
+              local
+            </span>
+          </Link>
         </div>
         {tileError && (
           <div className="tile-error" role="status">

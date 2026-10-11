@@ -1,5 +1,11 @@
 # Publicaciones, administradores, tema y correo
 
+## Sugerir un local
+
+En el mapa, **Agregar local** aparece debajo de los botones de zoom. El formulario pide nombre, categoría, dirección (calle y número) e información opcional. Al salir del campo de dirección se consulta GeoRef y se centra el pin; si hay varias coincidencias se puede elegir otra. Siempre hay que confirmar la posición antes de enviar. Tocar el mapa permite corregirla; cambiar la dirección o el pin invalida la confirmación anterior. Si la búsqueda falla, se conserva la dirección y se puede marcar el local manualmente. Las propuestas siguen requiriendo sesión y aprobación del administrador.
+
+Se consulta la API pública de [GeoRef Argentina](https://www.argentina.gob.ar/node/473623) solo con la dirección del local, con filtros de CABA y Vicente López. Las ubicaciones son aproximadas y se validan contra la cobertura. No se hace una consulta por cada tecla; los resultados se conservan en memoria durante cinco minutos y las solicitudes se cancelan al cambiar la dirección. No se requieren claves ni cambios de esquema.
+
 ## Publicaciones
 
 Desde la ficha del local, elegí **Publicar visita**. Incluí descripción y fecha; la calificación y las fotos son opcionales. Podés crear publicaciones independientes para visitas repetidas. Las publicaciones aparecen en tu perfil, la ficha del lugar y la pestaña Publicaciones de Actividad. También incorporan el lugar a Mi mapa > Ya fui. El puntaje del post no cambia la valoración general, que sigue utilizando la única reseña activa por persona y local.

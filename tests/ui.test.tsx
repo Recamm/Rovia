@@ -115,6 +115,13 @@ describe("Interfaz conectada al catálogo real y estados pendientes", () => {
       vi.fn(async () => new Response(JSON.stringify(snapshot))),
     );
     render(<App />);
+    const add = screen.getByRole("link", { name: "Agregar local" });
+    expect(add.getAttribute("href")).toBe("/sugerir-local");
+    expect(
+      add
+        .closest(".map-controls")
+        ?.querySelector('button[aria-label="Alejar mapa"]'),
+    ).toBeTruthy();
     expect(
       screen
         .getByRole("button", { name: "Explorar" })

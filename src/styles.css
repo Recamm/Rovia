@@ -845,6 +845,18 @@ main {
 .map-control:hover {
   background: #e5eee1;
 }
+.add-place-control {
+  height: auto;
+  min-height: 64px;
+  padding: 7px 3px;
+  border-radius: 10px;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.25;
+}
 .map-bottom-note {
   position: absolute;
   bottom: 58px;
@@ -3236,9 +3248,19 @@ main {
 .suggestion-form textarea {
   min-height: 95px;
 }
-.suggestion-form > div:first-child {
+.suggestion-form > .suggestion-location {
   position: sticky;
   top: 20px;
+}
+.suggestion-location > h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.suggestion-form .help {
+  margin: 12px 0;
+}
+.suggestion-form .place-fields {
+  margin-bottom: 12px;
 }
 .suggestions-history {
   border-top: 1px solid var(--line);
@@ -3419,7 +3441,7 @@ main {
   .suggestion-form {
     grid-template-columns: 1fr;
   }
-  .suggestion-form > div:first-child {
+  .suggestion-form > .suggestion-location {
     position: relative;
     top: 0;
   }
@@ -3583,6 +3605,7 @@ main {
     .admin-result,
     .skip-link,
     .map-coverage,
+    .add-place-control,
     .rovia-cluster,
     .leaflet-popup-content-wrapper,
     .leaflet-control-zoom a,

@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import type L from "leaflet";
 import type { Category, Place } from "../types";
 import { categories } from "../domain/rules";
@@ -104,11 +104,15 @@ export function PlaceFields({
   onChange,
   requireAddress = false,
   admin = false,
+  simple = false,
+  onAddressBlur,
 }: {
   value: PlaceDraft;
   onChange: (d: PlaceDraft) => void;
   requireAddress?: boolean;
   admin?: boolean;
+  simple?: boolean;
+  onAddressBlur?: () => void;
 }) {
   const field = (key: keyof PlaceDraft, text: string) =>
     onChange({ ...value, [key]: text });
@@ -144,107 +148,114 @@ export function PlaceFields({
           minLength={requireAddress ? 2 : undefined}
           maxLength={300}
           placeholder="Calle y altura"
+          onBlur={onAddressBlur}
           value={value.address}
           onChange={(e) => field("address", e.target.value)}
         />
       </label>
-      {admin && (
-        <label>
-          Barrio o zona
-          <input
-            maxLength={300}
-            value={value.area}
-            onChange={(e) => field("area", e.target.value)}
-          />
-        </label>
-      )}
-      <label>
-        Latitud
-        <input
-          required
-          type="number"
-          step="any"
-          min={-90}
-          max={90}
-          value={value.lat}
-          onChange={(e) => field("lat", e.target.value)}
-        />
-      </label>
-      <label>
-        Longitud
-        <input
-          required
-          type="number"
-          step="any"
-          min={-180}
-          max={180}
-          value={value.lng}
-          onChange={(e) => field("lng", e.target.value)}
-        />
-      </label>
-      <p className="help full-width">
-        Tocá el mapa para ubicar el pin o ingresá sus coordenadas. La ubicación
-        debe estar en CABA o Vicente López.
-      </p>
-      <label>
-        Teléfono · opcional
-        <input
-          type="tel"
-          maxLength={120}
-          value={value.phone}
-          onChange={(e) => field("phone", e.target.value)}
-        />
-      </label>
-      <label>
-        Sitio web · opcional
-        <input
-          maxLength={300}
-          placeholder="https://…"
-          value={value.website}
-          onChange={(e) => field("website", e.target.value)}
-        />
-      </label>
-      <label>
-        Instagram · opcional
-        <input
-          maxLength={300}
-          value={value.instagram}
-          onChange={(e) => field("instagram", e.target.value)}
-        />
-      </label>
-      <label>
-        Horarios · opcional
-        <input
-          maxLength={500}
-          placeholder="Ej.: Mo-Sa 08:00-20:00"
-          value={value.opening_hours}
-          onChange={(e) => field("opening_hours", e.target.value)}
-        />
-      </label>
-      {admin && (
+      {!simple && (
         <>
+          {admin && (
+            <label>
+              Barrio o zona
+              <input
+                maxLength={300}
+                value={value.area}
+                onChange={(e) => field("area", e.target.value)}
+              />
+            </label>
+          )}
           <label>
-            Rango de precios
-            <select
-              value={value.price_level}
-              onChange={(e) => field("price_level", e.target.value)}
-            >
-              <option value="">Desconocido</option>
-              {[1, 2, 3, 4].map((n) => (
-                <option key={n} value={n}>
-                  {"$".repeat(n)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="checkbox">
+            Latitud
             <input
-              type="checkbox"
-              checked={value.closed}
-              onChange={(e) => onChange({ ...value, closed: e.target.checked })}
+              required
+              type="number"
+              step="any"
+              min={-90}
+              max={90}
+              value={value.lat}
+              onChange={(e) => field("lat", e.target.value)}
             />
-            Cerrado permanentemente
           </label>
+          <label>
+            Longitud
+            <input
+              required
+              type="number"
+              step="any"
+              min={-180}
+              max={180}
+              value={value.lng}
+              onChange={(e) => field("lng", e.target.value)}
+            />
+          </label>
+          <p className="help full-width">
+            Tocá el mapa para ubicar el pin o ingresá sus coordenadas. La
+            ubicación debe estar en CABA o Vicente López.
+          </p>
+          <label>
+            Teléfono · opcional
+            <input
+              type="tel"
+              maxLength={120}
+              value={value.phone}
+              onChange={(e) => field("phone", e.target.value)}
+            />
+          </label>
+          <label>
+            Sitio web · opcional
+            <input
+              maxLength={300}
+              placeholder="https://…"
+              value={value.website}
+              onChange={(e) => field("website", e.target.value)}
+            />
+          </label>
+          <label>
+            Instagram · opcional
+            <input
+              maxLength={300}
+              value={value.instagram}
+              onChange={(e) => field("instagram", e.target.value)}
+            />
+          </label>
+          <label>
+            Horarios · opcional
+            <input
+              maxLength={500}
+              placeholder="Ej.: Mo-Sa 08:00-20:00"
+              value={value.opening_hours}
+              onChange={(e) => field("opening_hours", e.target.value)}
+            />
+          </label>
+          {admin && (
+            <>
+              <label>
+                Rango de precios
+                <select
+                  value={value.price_level}
+                  onChange={(e) => field("price_level", e.target.value)}
+                >
+                  <option value="">Desconocido</option>
+                  {[1, 2, 3, 4].map((n) => (
+                    <option key={n} value={n}>
+                      {"$".repeat(n)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={value.closed}
+                  onChange={(e) =>
+                    onChange({ ...value, closed: e.target.checked })
+                  }
+                />
+                Cerrado permanentemente
+              </label>
+            </>
+          )}
         </>
       )}
     </div>
@@ -262,6 +273,12 @@ export function LocationPicker({
     map.current = m;
   }, []);
   const marker = draftMarker(value);
+  const lat = marker?.lat,
+    lng = marker?.lng;
+  useEffect(() => {
+    if (lat !== undefined && lng !== undefined)
+      map.current?.flyTo([lat, lng], 16);
+  }, [lat, lng]);
   return (
     <div className="location-picker">
       <MapView
