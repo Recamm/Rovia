@@ -573,7 +573,7 @@ main {
   background: #f5eae0;
 }
 .category-chip.active {
-  background: var(--green);
+  background: var(--green-fill, var(--green));
   border-color: var(--green);
   color: white;
 }
@@ -799,7 +799,7 @@ main {
   top: 85px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--green);
+  background: var(--green-fill, var(--green));
   color: white;
   padding: 12px 18px;
   border-radius: 30px;
@@ -944,7 +944,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--green);
+  background: var(--green-fill, var(--green));
   color: white;
   border-radius: 50%;
   font-size: 12px;
@@ -1220,7 +1220,7 @@ main {
   left: 50%;
   transform: translateX(-50%);
   z-index: 5000;
-  background: var(--green);
+  background: var(--green-fill, var(--green));
   color: white;
   border-radius: 12px;
   box-shadow: 0 6px 28px #203f3b35;
@@ -3103,7 +3103,7 @@ main {
   white-space: nowrap;
 }
 .map-mode-switch button.active {
-  background: var(--green);
+  background: var(--green-fill, var(--green));
   color: white;
 }
 .personal-filters {
@@ -3150,7 +3150,7 @@ main {
   align-items: center;
   gap: 12px;
   padding: 9px 18px;
-  background: var(--green);
+  background: var(--green-fill, var(--green));
   color: white;
   min-height: 44px;
   font-size: 12px;
@@ -3509,4 +3509,252 @@ main {
   .admin-map-note {
     font-size: 11px;
   }
+}
+/* Theme tokens keep the map and forms consistent with the app. */
+:root {
+  --surface: #fff;
+  --surface-soft: #f0f4ee;
+  --text: #203f3b;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --text: #e8eee9;
+  --green: #e8eee9;
+  --cream: #181d1c;
+  --surface: #222a28;
+  --surface-soft: #2c3632;
+  --mint: #34483f;
+  --muted: #a6b5ae;
+  --line: #3d4944;
+  --coral: #f07857;
+  color-scheme: dark;
+  color: var(--text);
+  background: var(--cream);
+}
+:root[data-theme="dark"] .app-logo {
+  content: url("/logo-dark.svg");
+}
+:root[data-theme="dark"]
+  :is(
+    .header,
+    .sidebar,
+    .explore-panel,
+    .content-page,
+    .auth-form-panel,
+    .app-shell,
+    main
+  ) {
+  background: var(--cream);
+  color: var(--text);
+}
+:root[data-theme="dark"]
+  :is(
+    .review-card,
+    .review-form,
+    .place-card,
+    .list-card,
+    .person-card,
+    .modal,
+    .modal-content,
+    .configuration-card,
+    .admin-settings-card,
+    .map-detail-preview,
+    .map-pill,
+    .search-input,
+    .search-zone-button,
+    .filter-panel,
+    .place-info,
+    .list-select,
+    .place-correction,
+    .admin-editor,
+    .suggestion-card,
+    .leaflet-popup-content-wrapper,
+    .leaflet-control-zoom a,
+    input,
+    select,
+    textarea,
+    .button.secondary
+  ) {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--line);
+}
+:root[data-theme="dark"]
+  :is(
+    .nav-item.active,
+    .nav-item:hover,
+    .tabs button.active,
+    .category-chip,
+    .filter-chip,
+    .privacy-callout,
+    .visibility-tag,
+    .profile-cover,
+    .profile-counts,
+    .empty-state,
+    .photo-loading,
+    .personal-filters button,
+    .scope-switch button,
+    .map-scope-switch,
+    .selected-button,
+    .admin-banner
+  ) {
+  background: var(--surface-soft);
+  color: var(--text);
+  border-color: var(--line);
+}
+:root[data-theme="dark"]
+  :is(
+    .muted,
+    .help,
+    .eyebrow,
+    .nav-item,
+    .place-card-address,
+    .review-header > div span,
+    .explore-intro p,
+    .brand-tagline,
+    .profile-heading p,
+    .search-input svg,
+    .place-card .place-address
+  ) {
+  color: var(--muted);
+}
+:root[data-theme="dark"] .button.primary {
+  color: #181d1c;
+}
+:root[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.75) saturate(0.65);
+}
+:root[data-theme="dark"] .leaflet-container {
+  background: #252c29;
+}
+:root[data-theme="dark"] .leaflet-control-attribution {
+  background: var(--surface);
+  color: var(--text);
+}
+.theme-control {
+  padding: 22px 0;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.theme-control label {
+  max-width: 340px;
+}
+.post-photos .review-photo {
+  width: min(100%, 520px);
+  height: auto;
+  max-height: 450px;
+  object-fit: cover;
+}
+.post-photos {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+}
+.post-date {
+  color: var(--muted);
+  font-size: 13px;
+}
+.admin-user {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+.admin-user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea,
+  .search-input input,
+  .upload-label input {
+    font-size: 16px;
+  }
+  .sidebar > .nav-item:nth-child(1) {
+    order: 3;
+  }
+  .sidebar > .nav-item:nth-child(2) {
+    order: 1;
+  }
+  .sidebar > .nav-item:nth-child(3) {
+    order: 2;
+  }
+  .sidebar > .nav-item:nth-child(4) {
+    order: 4;
+  }
+  .sidebar > .nav-item:nth-child(5) {
+    order: 5;
+  }
+  .sidebar .map-nav svg {
+    width: 31px;
+    height: 31px;
+    stroke-width: 2.3;
+  }
+  .sidebar .map-nav {
+    position: relative;
+    gap: 2px;
+    transform: translateY(-8px);
+    height: 67px;
+  }
+  .sidebar .map-nav svg {
+    box-sizing: content-box;
+    background: var(--coral);
+    color: #fff;
+    padding: 11px;
+    border: 4px solid var(--cream);
+    border-radius: 50%;
+    box-shadow: 0 3px 10px #0002;
+  }
+  .sidebar .map-nav.active:before {
+    display: none;
+  }
+  .sidebar .admin-nav {
+    display: none;
+  }
+  .review-actions {
+    flex-wrap: wrap;
+  }
+}
+:root[data-theme="dark"]
+  :is(
+    .category-chip.active,
+    .map-pill.primary,
+    .cluster-count,
+    .count,
+    .map-controls button,
+    .scope-tabs button.active,
+    .scope-switch .active,
+    .admin-tabs button.active
+  ) {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+:root[data-theme="dark"] .auth-art {
+  background: #203f3b;
+  color: #fff;
+}
+:root[data-theme="dark"]
+  :is(
+    .upload-label,
+    .list-members,
+    .notification-item,
+    .list-invite,
+    .empty-icon,
+    .count
+  ) {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] {
+  --green-fill: #34483f;
+}
+:root[data-theme="dark"]
+  :is(.search-area, .toast, .map-mode-switch button.active) {
+  background: #34483f;
+  color: #fff;
 }

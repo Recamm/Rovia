@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="es-AR">
+<html lang="es-AR" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover"
     />
-    <meta name="theme-color" content="#203F3B" />
+    <meta name="theme-color" content="#C64E3B" />
     <meta
       name="description"
       content="Descubrí gastronomía de CABA y Vicente López, compartí experiencias y organizá tus lugares con tu gente."
@@ -20,10 +20,27 @@
       rel="icon"
       type="image/png"
       sizes="32x32"
-      href="/icons/rovia-32.png"
+      href="/icons/rovia-light-32-v2.png"
     />
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/rovia-180.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/icons/rovia-light-180-v2.png"
+    />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <script>
+      try {
+        const preference = localStorage.getItem("rovia-theme");
+        document.documentElement.dataset.theme =
+          preference === "system"
+            ? window.matchMedia?.("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : preference === "dark"
+              ? "dark"
+              : "light";
+      } catch {}
+    </script>
     <title>Rovia</title>
   </head>
   <body>

@@ -119,7 +119,7 @@ export async function reviewsFor(id: string) {
   const { data, error } = await db()
     .from("reviews")
     .select(
-      "*,profiles(id,username,display_name),review_photos(id,path,thumbnail_path),likes(user_id)",
+      "*,profiles!reviews_user_id_fkey(id,username,display_name),review_photos(id,path,thumbnail_path),likes(user_id)",
     )
     .eq("place_id", id)
     .eq("archived", false)

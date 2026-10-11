@@ -13,20 +13,20 @@ Deno.serve(async (req) => {
   if (error)
     return Response.json({ error: "No se pudo leer la cola" }, { status: 500 });
   let removed = 0;
-  for (const bucket of ["review-photos", "avatars"]) {
+  for (const bucket of ["review-photos", "post-photos", "avatars"]) {
     const paths = (data ?? [])
       .filter((x: { bucket: string }) => x.bucket === bucket)
       .map((x: { path: string }) => x.path);
     if (!paths.length) continue;
     const live = new Set<string>();
-    if (bucket === "review-photos") {
+    if (bucket !== "avatars") {
       const [full, thumb] = await Promise.all([
         admin
-          .from("review_photos")
+          .from(bucket === "post-photos" ? "post_photos" : "review_photos")
           .select("path,thumbnail_path")
           .in("path", paths),
         admin
-          .from("review_photos")
+          .from(bucket === "post-photos" ? "post_photos" : "review_photos")
           .select("path,thumbnail_path")
           .in("thumbnail_path", paths),
       ]);

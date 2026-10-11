@@ -1120,3 +1120,246 @@ describe.sequential(
     });
   },
 );
+describe("Publicaciones por visita y administración de cuentas", () => {
+  const author = "00000000-0000-4000-b000-000000000010";
+  const viewer = "00000000-0000-4000-b000-000000000011";
+  const local = "10000000-0000-4000-b000-000000000010";
+  let post: string;
+  beforeAll(async () => {
+    for (const [id, username] of [
+      [author, "post_author"],
+      [viewer, "post_viewer"],
+    ])
+      await pg.query("insert into auth.users values($1,$2)", [
+        id,
+        JSON.stringify({ username, display_name: username }),
+      ]);
+    await pg.query(
+      "insert into public.places(id,name,category,lat,lng) values($1,'Lugar para publicaciones','cafe',-34.588,-58.431)",
+      [local],
+    );
+    await pg.query(
+      "update public.profile_details set visibility='public' where id=$1",
+      [author],
+    );
+  });
+  it("admite visitas repetidas sin puntaje y las agrega a Mi mapa", async () => {
+    for (const day of ["2026-01-01", "2026-02-02"]) {
+      const row = await as<{ id: string }>(
+        "authenticated",
+        author,
+        "insert into posts(place_id,visited_on,description,visibility) values($1,$2,'Una visita para probar','private') returning id",
+        [local, day],
+      );
+      post = row.rows[0].id;
+    }
+    expect(
+      (
+        await as(
+          "authenticated",
+          author,
+          "select * from posts where place_id=$1",
+          [local],
+        )
+      ).rows,
+    ).toHaveLength(2);
+    expect(
+      (
+        await as<{ result: { id: string }[] }>(
+          "authenticated",
+          author,
+          "select public.map_places(-34.59,-58.44,-34.58,-58.42,-34.588,-58.431,map_scope=>'mine',personal_filter=>'visited') result",
+        )
+      ).rows[0].result.some((p) => p.id === local),
+    ).toBe(true);
+  });
+  it("protege publicaciones privadas, fotos y escrituras ajenas", async () => {
+    await pg.query(
+      "insert into post_photos(post_id,path,thumbnail_path) values($1,'post/full','post/thumb')",
+      [post],
+    );
+    await pg.query(
+      "insert into storage.objects(bucket_id,name) values('post-photos','post/full')",
+    );
+    expect(
+      (
+        await as("authenticated", viewer, "select * from posts where id=$1", [
+          post,
+        ])
+      ).rows,
+    ).toHaveLength(0);
+    expect(
+      (
+        await as(
+          "authenticated",
+          viewer,
+          "select * from storage.objects where name='post/full'",
+        )
+      ).rows,
+    ).toHaveLength(0);
+    expect(
+      (
+        await as(
+          "authenticated",
+          viewer,
+          "update posts set description='Otra persona' where id=$1 returning id",
+          [post],
+        )
+      ).rows,
+    ).toHaveLength(0);
+    await expect(
+      as(
+        "authenticated",
+        viewer,
+        "insert into post_likes(post_id) values($1)",
+        [post],
+      ),
+    ).rejects.toThrow();
+    await expect(
+      as("authenticated", author, "update posts set hidden=true where id=$1", [
+        post,
+      ]),
+    ).rejects.toThrow();
+  });
+  it("permite fotos públicas solo con el perfil y la publicación públicos", async () => {
+    await as(
+      "authenticated",
+      author,
+      "update posts set visibility='public' where id=$1",
+      [post],
+    );
+    expect(
+      (
+        await as(
+          "anon",
+          null,
+          "select * from storage.objects where name='post/full'",
+        )
+      ).rows,
+    ).toHaveLength(1);
+    await pg.query(
+      "update profile_details set visibility='private' where id=$1",
+      [author],
+    );
+    expect(
+      (
+        await as(
+          "anon",
+          null,
+          "select * from storage.objects where name='post/full'",
+        )
+      ).rows,
+    ).toHaveLength(0);
+  });
+  it("limita fotos, encola limpieza y valida fecha y calificación", async () => {
+    for (let i = 0; i < 4; i++)
+      await pg.query(
+        "insert into post_photos(post_id,path,thumbnail_path) values($1,$2,$3)",
+        [post, `post/full-${i}`, `post/thumb-${i}`],
+      );
+    await expect(
+      pg.query(
+        "insert into post_photos(post_id,path,thumbnail_path) values($1,'post/extra','post/extra-thumb')",
+        [post],
+      ),
+    ).rejects.toThrow("Máximo");
+    await expect(
+      as(
+        "authenticated",
+        author,
+        "insert into posts(place_id,visited_on,description,rating) values($1,'2099-01-01','Fecha futura',1)",
+        [local],
+      ),
+    ).rejects.toThrow();
+    await expect(
+      as(
+        "authenticated",
+        author,
+        "insert into posts(place_id,visited_on,description,rating) values($1,'2026-01-01','Puntaje inválido',6)",
+        [local],
+      ),
+    ).rejects.toThrow();
+    await as("authenticated", author, "delete from posts where id=$1", [post]);
+    expect(
+      (
+        await pg.query(
+          "select * from private.photo_gc where bucket='post-photos'",
+        )
+      ).rows,
+    ).toHaveLength(10);
+  });
+  it("un usuario común no puede otorgarse administrador y protege al último admin", async () => {
+    await expect(
+      as("authenticated", viewer, "select admin_set_role($1,true)", [viewer]),
+    ).rejects.toThrow();
+    const { rows: old } = await pg.query<{ user_id: string }>(
+      "select user_id from private.administrators",
+    );
+    await pg.exec("delete from private.administrators");
+    await pg.query("insert into private.administrators values($1)", [author]);
+    await expect(
+      as("authenticated", author, "select admin_set_role($1,false)", [author]),
+    ).rejects.toThrow("al menos");
+    await as("authenticated", author, "select admin_set_role($1,true)", [
+      viewer,
+    ]);
+    await as("authenticated", viewer, "select admin_set_role($1,false)", [
+      author,
+    ]);
+    await pg.exec("delete from private.administrators");
+    for (const r of old)
+      await pg.query("insert into private.administrators values($1)", [
+        r.user_id,
+      ]);
+  });
+  it("una suspensión bloquea lectura y escritura aunque el JWT no haya vencido", async () => {
+    await pg.query("insert into private.disabled_accounts values($1)", [
+      author,
+    ]);
+    expect(
+      (await as("authenticated", author, "select * from posts")).rows,
+    ).toHaveLength(0);
+    await expect(
+      as(
+        "authenticated",
+        author,
+        "insert into posts(place_id,visited_on,description) values($1,'2026-01-01','Cuenta suspendida')",
+        [local],
+      ),
+    ).rejects.toThrow();
+    await pg.query("delete from private.disabled_accounts where user_id=$1", [
+      author,
+    ]);
+  });
+  it("elimina cuentas con listas, publicaciones y propuestas sin bloquear claves foráneas", async () => {
+    await as(
+      "authenticated",
+      author,
+      "insert into lists(name) values('Lista antes de borrar')",
+    );
+    await as(
+      "authenticated",
+      author,
+      "insert into posts(place_id,visited_on,description) values($1,'2026-01-01','Otra visita')",
+      [local],
+    );
+    await pg.query(
+      "insert into place_suggestions(user_id,name,category,lat,lng,address,area) values($1,'Propuesta de cuenta borrada','cafe',-34.588,-58.431,'Dirección 123','CABA')",
+      [author],
+    );
+    await pg.query("delete from auth.users where id=$1", [author]);
+    expect(
+      (await pg.query("select * from posts where user_id=$1", [author])).rows,
+    ).toHaveLength(0);
+    expect(
+      (await pg.query("select * from lists where owner_id=$1", [author])).rows,
+    ).toHaveLength(0);
+    expect(
+      (
+        await pg.query(
+          "select * from place_suggestions where name='Propuesta de cuenta borrada' and user_id is null",
+        )
+      ).rows,
+    ).toHaveLength(1);
+  });
+});

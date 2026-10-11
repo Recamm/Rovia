@@ -117,3 +117,18 @@ export type Notification = {
   read_at: string | null;
   created_at: string;
 };
+export type Post = {
+  id: string;
+  user_id: string;
+  place_id: string;
+  visited_on: string;
+  description: string;
+  rating: number | null;
+  visibility: Visibility;
+  hidden: boolean;
+  created_at: string;
+  profiles?: Pick<Profile, "id" | "username" | "display_name">;
+  places?: Pick<Place, "id" | "name" | "category">;
+  post_photos?: { id: string; path: string; thumbnail_path: string }[];
+  post_likes?: { user_id: string }[];
+};

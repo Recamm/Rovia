@@ -13,6 +13,7 @@ import {
   Empty,
   PlaceLink,
 } from "../components/UI";
+import PostsFeed from "../components/PostsFeed";
 import ReviewCard from "../components/ReviewCard";
 type Entry = Review & {
   entry_type: "review" | "visit";
@@ -20,11 +21,12 @@ type Entry = Review & {
 };
 type Cursor = { time: string; id: string } | null;
 export default function Feed() {
+  const [kind, setKind] = useState("posts");
   const [mode, setMode] = useState("all");
   const { session } = useApp();
   const feed = useInfiniteQuery({
     queryKey: ["feed", mode, session?.user.id],
-    enabled: !!session,
+    enabled: !!session && kind === "reviews",
     initialPageParam: null as Cursor,
     queryFn: async ({ pageParam }) =>
       (await rpc("activity_feed", {
@@ -53,6 +55,20 @@ export default function Feed() {
       ) : (
         <>
           <div className="tabs">
+            <button
+              className={kind === "posts" ? "active" : ""}
+              onClick={() => setKind("posts")}
+            >
+              Publicaciones
+            </button>
+            <button
+              className={kind === "reviews" ? "active" : ""}
+              onClick={() => setKind("reviews")}
+            >
+              Reseñas y visitas
+            </button>
+          </div>
+          <div className="tabs">
             {[
               ["all", "Todo"],
               ["friends", "Amigos"],
@@ -67,7 +83,9 @@ export default function Feed() {
               </button>
             ))}
           </div>
-          {feed.isPending ? (
+          {kind === "posts" ? (
+            <PostsFeed mode={mode} />
+          ) : feed.isPending ? (
             <Loading />
           ) : feed.isError ? (
             <ErrorState error={feed.error} />
@@ -110,7 +128,7 @@ export default function Feed() {
               )}
             </div>
           )}
-          {feed.hasNextPage && (
+          {kind === "reviews" && feed.hasNextPage && (
             <button
               className="button secondary"
               disabled={feed.isFetchingNextPage}

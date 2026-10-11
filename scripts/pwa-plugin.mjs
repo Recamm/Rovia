@@ -15,6 +15,15 @@ export default function pwa() {
         "/index.html",
         "/logo.svg",
         "/manifest.webmanifest",
+        "/manifest-light.webmanifest",
+        "/manifest-dark.webmanifest",
+        "/logo-light.svg",
+        "/logo-dark.svg",
+        ...["light", "dark"].flatMap((theme) =>
+          [32, 180, 192, 512, "maskable-512"].map(
+            (n) => `/icons/rovia-${theme}-${n}-v2.png`,
+          ),
+        ),
         "/icons/rovia-32.png",
         "/icons/rovia-180.png",
         "/icons/rovia-192.png",

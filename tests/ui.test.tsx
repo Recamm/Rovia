@@ -65,7 +65,7 @@ describe("Interfaz conectada al catálogo real y estados pendientes", () => {
     fireEvent.click(screen.getByRole("button", { name: "Conocer este lugar" }));
     await screen.findByRole("heading", { name });
     fireEvent.click(
-      screen.getByRole("link", { name: "Compartir experiencia" }),
+      screen.getByRole("link", { name: "Escribir reseña" }),
     );
     const enter = await screen.findByRole("link", { name: /Entrar a Rovia/ });
     expect(enter.getAttribute("href")).toContain("next=%2Flocal%2F");

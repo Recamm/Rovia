@@ -14,7 +14,9 @@ import { db, configured, fail } from "../services/supabase";
 import { useApp } from "../hooks/useApp";
 import { validateUsername } from "../domain/rules";
 import { PageTitle, ErrorState, Loading } from "../components/UI";
+import { useTheme, type ThemePreference } from "../hooks/useTheme";
 export default function Settings() {
+  const { preference, setPreference } = useTheme();
   const { session, invalidate, notice, isAdmin, adminMode, setAdminMode } =
     useApp();
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ export default function Settings() {
   const [visibility, setVisibility] = useState<Visibility>("friends");
   const [visits, setVisits] = useState<Visibility>("friends");
   const [error, setError] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const profile = useQuery({
     queryKey: ["profile", session?.user.id],
     enabled: !!session,
@@ -90,31 +93,24 @@ export default function Settings() {
         title="Tu cuenta y tu privacidad"
         description="Vos elegís qué compartís y con quién."
       />
-      <section className="configuration-card">
-        <Database size={24} />
-        <div>
-          <h2>{configured ? "Supabase configurado" : "Conexión pendiente"}</h2>
-          <p>
-            {configured
-              ? "El frontend utiliza tu proyecto de Supabase. Las operaciones se verifican en cada consulta."
-              : "El mapa usa un catálogo real descargado de OSM el 10 de octubre de 2026. Cuentas, reseñas y guardados necesitan conectar Supabase."}
-          </p>
-          {!configured && (
-            <ol>
-              <li>Creá un proyecto de Supabase.</li>
-              <li>
-                Aplicá las migraciones de <code>supabase/migrations</code>.
-              </li>
-              <li>
-                Configurá URL y clave pública en <code>.env.local</code>.
-              </li>
-              <li>
-                Desplegá las Edge Functions, configurá correo e importá el
-                catálogo.
-              </li>
-            </ol>
-          )}
-        </div>
+      <section className="theme-control">
+        <h2>Apariencia</h2>
+        <label>
+          Tema de Rovia
+          <select
+            value={preference}
+            onChange={(e) => setPreference(e.target.value as ThemePreference)}
+          >
+            <option value="system">Usar el tema del dispositivo</option>
+            <option value="light">Claro</option>
+            <option value="dark">Oscuro</option>
+          </select>
+        </label>
+        <p className="help">
+          El ícono de instalación usa el tema seleccionado. En iPhone, para
+          actualizar un ícono ya instalado puede ser necesario quitar Rovia de
+          inicio y agregarla de nuevo.
+        </p>
       </section>
       {session ? (
         <>
@@ -225,6 +221,33 @@ export default function Settings() {
               </button>
             </form>
           )}
+          <h2>Cambiar contraseña</h2>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const { error } = await db().auth.updateUser({
+                password: newPassword,
+              });
+              if (error) notice(error.message);
+              else {
+                notice("Contraseña actualizada.");
+                setNewPassword("");
+              }
+            }}
+          >
+            <label>
+              Nueva contraseña
+              <input
+                type="password"
+                autoComplete="new-password"
+                minLength={12}
+                required
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </label>
+            <button className="button secondary">Cambiar contraseña</button>
+          </form>
           <h2>Notificaciones dentro de Rovia</h2>
           {preferences.data &&
             Object.entries({

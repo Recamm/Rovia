@@ -55,7 +55,7 @@ export default function Auth() {
           throw new Error(
             "El usuario debe tener entre 3 y 24 letras minúsculas, números o guiones bajos.",
           );
-        const { error: e } = await client.auth.signUp({
+        const { data, error: e } = await client.auth.signUp({
           email,
           password,
           options: {
@@ -67,9 +67,8 @@ export default function Auth() {
           },
         });
         fail(e);
-        setMessage(
-          "Revisá tu correo para confirmar la cuenta. Si no llega, verificá la configuración de SMTP.",
-        );
+        if (data.session) navigate(next);
+        else setMessage("Cuenta creada. Si no podés ingresar, contactá al administrador.");
       } else if (mode === "forgot") {
         const { error: e } = await client.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth/reset`,

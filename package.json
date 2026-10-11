@@ -11,7 +11,7 @@
     "test:e2e": "playwright test",
     "import:osm": "node scripts/import-osm.mjs",
     "prepare:edge": "node scripts/prepare-edge.mjs",
-    "check:edge": "deno check --node-modules-dir=manual --no-config supabase/functions/image-upload/index.ts supabase/functions/photo-cleanup/index.ts",
+    "check:edge": "deno check --node-modules-dir=manual --no-config supabase/functions/image-upload/index.ts supabase/functions/photo-cleanup/index.ts supabase/functions/admin-users/index.ts",
     "format": "prettier --write src tests scripts supabase/functions package.json tsconfig.json vite.config.ts playwright.config.ts",
     "catalog:refresh": "node scripts/refresh-catalog.mjs",
     "catalog:check": "node scripts/check-catalog.mjs",

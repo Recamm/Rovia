@@ -201,7 +201,8 @@ export default function Admin() {
   if (!adminMode)
     return (
       <div className="content-page">
-        <PageTitle
+        <Link className="button secondary" to="/admin/usuarios">Administrar usuarios</Link>
+      <PageTitle
           eyebrow="TU CUENTA"
           title="Administración de Rovia"
           description="Podés usar tu cuenta normalmente y activar esta vista cuando necesites gestionar el catálogo."

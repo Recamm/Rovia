@@ -119,16 +119,26 @@ Deno.serve(async (req) => {
     if (!(file instanceof File) || file.size > 5 * 1024 * 1024)
       return json({ error: "Subí una imagen de hasta 5 MB." }, 400);
     const avatar = form.get("mode") === "avatar";
-    bucket = avatar ? "avatars" : "review-photos";
-    const reviewId = String(form.get("review_id") ?? "");
+    const post = form.get("mode") === "post";
+    bucket = avatar ? "avatars" : post ? "post-photos" : "review-photos";
+    const reviewId = String(form.get(post ? "post_id" : "review_id") ?? "");
     if (!avatar) {
       if (!uuid.test(reviewId)) return json({ error: "Reseña inválida." }, 400);
-      const { data: r, error } = await admin
-        .from("reviews")
-        .select("user_id,archived")
+      const { data: row, error } = await admin
+        .from(post ? "posts" : "reviews")
+        .select(post ? "user_id" : "user_id,archived")
         .eq("id", reviewId)
         .single();
-      if (error || !r || r.user_id !== user.id || r.archived)
+      const r = row as unknown as {
+        user_id: string;
+        archived?: boolean;
+      } | null;
+      if (
+        error ||
+        !r ||
+        r.user_id !== user.id ||
+        ("archived" in r && r.archived)
+      )
         return json({ error: "No podés agregar fotos a esta reseña." }, 403);
     }
     await loadWasm();
@@ -175,8 +185,12 @@ Deno.serve(async (req) => {
         });
     } else {
       const { error } = await admin
-        .from("review_photos")
-        .insert({ review_id: reviewId, path, thumbnail_path: thumbnail });
+        .from(post ? "post_photos" : "review_photos")
+        .insert({
+          [post ? "post_id" : "review_id"]: reviewId,
+          path,
+          thumbnail_path: thumbnail,
+        });
       if (error) throw error;
     }
     uploaded = [];
