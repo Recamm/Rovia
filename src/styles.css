@@ -3543,9 +3543,6 @@ main {
 :root[data-theme="dark"] .brand {
   color: var(--coral);
 }
-:root[data-theme="dark"] .brand-mark {
-  background: var(--cream);
-}
 :root[data-theme="dark"]
   :is(
     .header,

@@ -47,7 +47,7 @@ afterEach(() => {
   localStorage.removeItem("rovia-theme");
 });
 describe("Interfaz conectada al catálogo real y estados pendientes", () => {
-  it("cambia el archivo del logo al elegir oscuro y vuelve al claro", () => {
+  it("conserva el logo naranja con R blanca al alternar el tema", () => {
     window.history.replaceState(null, "", "/configuracion");
     localStorage.setItem("rovia-theme", "light");
     render(<App />);
@@ -58,7 +58,7 @@ describe("Interfaz conectada al catálogo real y estados pendientes", () => {
     fireEvent.change(screen.getByLabelText("Tema de Rovia"), {
       target: { value: "dark" },
     });
-    expect(logo.getAttribute("src")).toBe("/logo-dark.svg");
+    expect(logo.getAttribute("src")).toBe("/logo-light.svg");
     expect(document.documentElement.dataset.theme).toBe("dark");
     fireEvent.change(screen.getByLabelText("Tema de Rovia"), {
       target: { value: "light" },

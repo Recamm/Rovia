@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useApp } from "../hooks/useApp";
-import { useTheme } from "../hooks/useTheme";
 import { db, configured, fail } from "../services/supabase";
 const nav = [
   { to: "/", label: "Explorar", icon: MapPin },
@@ -23,7 +22,6 @@ const nav = [
 ];
 export default function Layout() {
   const { session, adminMode, setAdminMode } = useApp();
-  const { theme } = useTheme();
   const unread = useQuery({
     queryKey: ["unread", session?.user.id],
     enabled: !!session,
@@ -47,7 +45,7 @@ export default function Layout() {
           <span className="brand-mark">
             <img
               className="app-logo"
-              src={`/logo-${theme}.svg`}
+              src="/logo-light.svg"
               alt=""
               width="34"
               height="34"
