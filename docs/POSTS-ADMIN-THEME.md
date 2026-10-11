@@ -18,7 +18,7 @@ El primer administrador se asigna desde SQL con la identidad verificada del prop
 
 ## Apariencia e iPhone
 
-Configuración > Apariencia: Claro, Oscuro o tema del dispositivo. Se conserva la preferencia local. El mapa también cambia de apariencia.
+Configuración > Apariencia: Claro, Oscuro o tema del dispositivo. **Claro es el predeterminado**, incluso en un dispositivo con modo oscuro; se conserva cualquier preferencia local ya elegida. El mapa también cambia de apariencia.
 
 Se ofrecen dos manifiestos e íconos opacos: claro con fondo terracota/naranja y marca blanca; oscuro con fondo oscuro y marca naranja. El navegador recibe la variante activa al instalar. iOS puede guardar el ícono de inicio y no cambiarlo automáticamente cuando cambia el tema de una PWA instalada. Para actualizarlo, quitar el acceso de inicio, abrir Rovia en Safari, elegir el tema y volver a agregarlo. Las cuentas y datos permanecen en Supabase. No se afirma actualización automática del ícono instalado.
 

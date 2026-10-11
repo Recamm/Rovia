@@ -10,14 +10,14 @@ const Context = createContext<{
   preference: ThemePreference;
   theme: "light" | "dark";
   setPreference: (v: ThemePreference) => void;
-}>({ preference: "system", theme: "light", setPreference: () => {} });
+}>({ preference: "light", theme: "light", setPreference: () => {} });
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [preference, setPreference] = useState<ThemePreference>(() => {
     try {
       const value = localStorage.getItem("rovia-theme");
-      return value === "dark" || value === "light" ? value : "system";
+      return value === "dark" || value === "system" ? value : "light";
     } catch {
-      return "system";
+      return "light";
     }
   });
   const [systemDark, setSystemDark] = useState(
