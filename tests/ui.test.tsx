@@ -44,8 +44,27 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
   window.history.replaceState(null, "", "/");
+  localStorage.removeItem("rovia-theme");
 });
 describe("Interfaz conectada al catálogo real y estados pendientes", () => {
+  it("cambia el archivo del logo al elegir oscuro y vuelve al claro", () => {
+    window.history.replaceState(null, "", "/configuracion");
+    localStorage.setItem("rovia-theme", "light");
+    render(<App />);
+    const logo = screen
+      .getByRole("link", { name: "Rovia, ir a explorar" })
+      .querySelector("img")!;
+    expect(logo.getAttribute("src")).toBe("/logo-light.svg");
+    fireEvent.change(screen.getByLabelText("Tema de Rovia"), {
+      target: { value: "dark" },
+    });
+    expect(logo.getAttribute("src")).toBe("/logo-dark.svg");
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    fireEvent.change(screen.getByLabelText("Tema de Rovia"), {
+      target: { value: "light" },
+    });
+    expect(logo.getAttribute("src")).toBe("/logo-light.svg");
+  });
   it("carga locales, abre una ficha y conserva el destino de reseña al pedir acceso", async () => {
     vi.stubGlobal(
       "fetch",
@@ -64,9 +83,7 @@ describe("Interfaz conectada al catálogo real y estados pendientes", () => {
     fireEvent.click(first);
     fireEvent.click(screen.getByRole("button", { name: "Conocer este lugar" }));
     await screen.findByRole("heading", { name });
-    fireEvent.click(
-      screen.getByRole("link", { name: "Escribir reseña" }),
-    );
+    fireEvent.click(screen.getByRole("link", { name: "Escribir reseña" }));
     const enter = await screen.findByRole("link", { name: /Entrar a Rovia/ });
     expect(enter.getAttribute("href")).toContain("next=%2Flocal%2F");
     expect(enter.getAttribute("href")).toContain("%2Fresena");

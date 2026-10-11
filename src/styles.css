@@ -3527,12 +3527,24 @@ main {
   --muted: #a6b5ae;
   --line: #3d4944;
   --coral: #f07857;
+  --accent-hover: #ff906f;
+  --on-accent: #181d1c;
+  --success-bg: #243b2d;
+  --success-text: #a2d9b2;
+  --warning-bg: #3b3224;
+  --warning-text: #e7c27e;
+  --danger-bg: #402b28;
+  --danger-text: #ffb4a5;
+  --green-fill: #34483f;
   color-scheme: dark;
   color: var(--text);
   background: var(--cream);
 }
-:root[data-theme="dark"] .app-logo {
-  content: url("/logo-dark.svg");
+:root[data-theme="dark"] .brand {
+  color: var(--coral);
+}
+:root[data-theme="dark"] .brand-mark {
+  background: var(--cream);
 }
 :root[data-theme="dark"]
   :is(
@@ -3568,6 +3580,13 @@ main {
     .place-correction,
     .admin-editor,
     .suggestion-card,
+    .notification-row,
+    .member-row,
+    .moderation-card,
+    .admin-result,
+    .skip-link,
+    .map-coverage,
+    .rovia-cluster,
     .leaflet-popup-content-wrapper,
     .leaflet-control-zoom a,
     input,
@@ -3581,8 +3600,6 @@ main {
 }
 :root[data-theme="dark"]
   :is(
-    .nav-item.active,
-    .nav-item:hover,
     .tabs button.active,
     .category-chip,
     .filter-chip,
@@ -3612,6 +3629,18 @@ main {
     .review-header > div span,
     .explore-intro p,
     .brand-tagline,
+    .pilot,
+    .tabs button,
+    .configuration-card p,
+    .configuration-card li,
+    .privacy-callout p,
+    .connection-note p,
+    .place-address,
+    .place-card-meta,
+    .place-card p,
+    .place-rating span,
+    .catalog-foot,
+    .loading,
     .profile-heading p,
     .search-input svg,
     .place-card .place-address
@@ -3619,16 +3648,34 @@ main {
   color: var(--muted);
 }
 :root[data-theme="dark"] .button.primary {
-  color: #181d1c;
+  background: var(--coral);
+  color: var(--on-accent);
 }
-:root[data-theme="dark"] .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) brightness(0.75) saturate(0.65);
+:root[data-theme="dark"] .button.primary:hover {
+  background: var(--accent-hover);
+}
+/* Keep navigation flat: touch hover must not leave a filled rectangle. */
+:root[data-theme="dark"] .sidebar .nav-item {
+  background: transparent;
+  box-shadow: none;
+  transition: color 0.15s;
+}
+:root[data-theme="dark"] .sidebar .nav-item:hover,
+:root[data-theme="dark"] .sidebar .nav-item.active {
+  background: transparent;
+  color: var(--coral);
+}
+:root[data-theme="dark"] .sidebar .nav-item.active {
+  font-weight: 700;
+}
+:root[data-theme="dark"] .sidebar .nav-item.active::before {
+  content: none;
 }
 :root[data-theme="dark"] .leaflet-container {
   background: #252c29;
 }
 :root[data-theme="dark"] .leaflet-control-attribution {
-  background: var(--surface);
+  background: var(--surface) !important;
   color: var(--text);
 }
 .theme-control {
@@ -3712,6 +3759,10 @@ main {
   .sidebar .map-nav.active:before {
     display: none;
   }
+  :root[data-theme="dark"] .sidebar .map-nav svg {
+    color: var(--on-accent);
+    box-shadow: none;
+  }
   .sidebar .admin-nav {
     display: none;
   }
@@ -3750,11 +3801,61 @@ main {
   color: var(--text);
 }
 
-:root[data-theme="dark"] {
-  --green-fill: #34483f;
-}
 :root[data-theme="dark"]
   :is(.search-area, .toast, .map-mode-switch button.active) {
-  background: #34483f;
-  color: #fff;
+  background: var(--green-fill);
+  color: var(--text);
+}
+/* Explicit dark surfaces and status colors; photos and logos stay unfiltered. */
+:root[data-theme="dark"]
+  :is(
+    .place-art,
+    .place-hero,
+    .list-cover,
+    .notification-icon,
+    .notification-row.unread,
+    .invitation,
+    .connection-note,
+    .icon-button:hover,
+    .admin-result:hover,
+    .personal-filters
+  ) {
+  background: var(--surface-soft);
+  color: var(--text);
+  border-color: var(--line);
+}
+:root[data-theme="dark"]
+  :is(
+    .category-chip:hover,
+    .filter-chip:hover,
+    .map-control:hover,
+    .button.secondary:hover
+  ) {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+:root[data-theme="dark"] :is(input, textarea)::placeholder {
+  color: var(--muted);
+}
+:root[data-theme="dark"] :is(button, a, input, select, textarea):focus-visible {
+  outline-color: var(--coral);
+}
+:root[data-theme="dark"] .modal-backdrop {
+  background: #0009;
+}
+:root[data-theme="dark"]
+  :is(.success, .success-callout, .status-chip.approved) {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-color: var(--success-text);
+}
+:root[data-theme="dark"] .status-chip.pending {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border-color: var(--warning-text);
+}
+:root[data-theme="dark"] :is(.error, .status-chip.rejected) {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-color: var(--danger-text);
 }
